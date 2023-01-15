@@ -13,19 +13,16 @@ BPF_ATTACH = ${BPF_TARGETS:=_attach}
 BPF_DETATCH = ${BPF_TARGETS:=_detach}
 BPF_RELOAD = ${BPF_TARGETS:=_reload}
 
-MAP_PIN = ${MAP_TARGETS:=_pin}
-MAP_PIN_FILE = $(addprefix /sys/fs/bpf/, $(MAP_TARGETS))
 MAP_UNPIN = ${MAP_TARGETS:=_unpin}
 
 CLANG ?= clang
 
 all: $(BPF_OBJ) agent
 
-$(BPF_OBJ): %.o: %.c
+$(BPF_OBJ): %.o: %.c vmlinux.h
 	$(CLANG) -target bpf \
 		-Wall \
-		-Werror \
-		-O3 -c -o $@ $<
+		-O3 -g -c -o $@ $<
 
 agent:
 	make -C agent
@@ -64,17 +61,14 @@ $(BPF_UNLOAD): %_unload: %_detach
 
 ## MAPS ##
 
-$(MAP_PIN): %_pin: /sys/fs/bpf/%
-
-$(MAP_PIN_FILE): /sys/fs/bpf/%:
-	bpftool map pin name $* /sys/fs/bpf/$*
-
 $(MAP_UNPIN): %_unpin:
 	rm -rf /sys/fs/bpf/$*
 
 ## UTILS ##
 
-init: | tc_egress_load_init tc_egress_attach rule_pin
+init: | tc_egress_load_init tc_egress_attach
+
+reload: | tc_egress_unload /sys/fs/bpf/tc_egress tc_egress_attach
 
 unload: | tc_egress_unload tc_qdisc_delete rule_unpin
 
