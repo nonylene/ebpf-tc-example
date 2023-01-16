@@ -32,3 +32,11 @@ $ sudo make unload # Uninstall eBPF program
 ```
 $ sudo bpftool btf dump file /sys/kernel/btf/vmlinux format c > vmlinux.h
 ```
+
+### Put a entry to the map
+
+e.g. Drop ICMP packets to 8.8.4.4
+
+```
+$ sudo bpftool map update pinned /sys/fs/bpf/rule key 0x04 0x04 0x08 0x08 value 0x00
+```

@@ -18,6 +18,8 @@ struct {
   __uint(max_entries, 1024);
   __uint(pinning, LIBBPF_PIN_BY_NAME);
   __type(key, struct in_addr);
+  // `void` cannot be used here (will fail with an errro "can't determine value
+  // size for type error" error)
   __type(value, __u_char);  // not used; should be fillled with 0x0
 } rule SEC(".maps");
 
