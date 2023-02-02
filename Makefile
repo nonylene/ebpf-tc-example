@@ -19,7 +19,7 @@ CLANG ?= clang
 
 all: $(BPF_OBJ)
 
-$(BPF_OBJ): %.o: %.c vmlinux.h
+$(BPF_OBJ): %.o: %.c
 	$(CLANG) -target bpf \
 		-Wall \
 		-O3 -g -c -o $@ $<
