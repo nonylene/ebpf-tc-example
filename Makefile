@@ -17,17 +17,12 @@ MAP_UNPIN = ${MAP_TARGETS:=_unpin}
 
 CLANG ?= clang
 
-all: $(BPF_OBJ) agent
+all: $(BPF_OBJ)
 
 $(BPF_OBJ): %.o: %.c vmlinux.h
 	$(CLANG) -target bpf \
 		-Wall \
 		-O3 -g -c -o $@ $<
-
-agent:
-	make -C agent
-
-.PHONY: agent
 
 ## PROGS ##
 
@@ -75,10 +70,7 @@ unload: | tc_egress_unload tc_qdisc_delete rule_unpin
 log:
 	cat /sys/kernel/debug/tracing/trace_pipe
 
-clean: | unload agent-clean
+clean: | unload
 	rm -f $(BPF_OBJ)
 
-agent-clean:
-	make -C agent clean
-
-.PHONY: tc_qdisc tc_qdisc_delete clean agent-clean log unload init $(CLANG) $(LLC) $(BPF_LOAD) $(BPF_ATTACH) $(BPF_DETATCH) $(BPF_UNLOAD) $(BPF_RELOAD) $(MAP_PIN) $(MAP_UNPIN)
+.PHONY: tc_qdisc tc_qdisc_delete clean log unload init $(CLANG) $(LLC) $(BPF_LOAD) $(BPF_ATTACH) $(BPF_DETATCH) $(BPF_UNLOAD) $(BPF_RELOAD) $(MAP_PIN) $(MAP_UNPIN)
