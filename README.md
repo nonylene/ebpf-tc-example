@@ -1,6 +1,8 @@
 # ebpf-tc-example
 eBPF example repository for study purpose
 
+[blog article (ja)]: https://nonylene.hatenablog.jp/entry/2023/02/03/001155
+
 ## Requirements
 
 ### Ubuntu 22.04
